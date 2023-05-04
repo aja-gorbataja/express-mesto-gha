@@ -7,16 +7,17 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  User.findById(req.params.id)
-    .then((user) => res.send(user))
+  const { userId } = req.params;
+  User.findById(userId)
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя' });
+        return res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя' });
       }
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
       }
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 
@@ -39,12 +40,12 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+        return res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
       }
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
       }
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 
@@ -54,11 +55,11 @@ module.exports.updateAvatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара' });
+        return res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара' });
       }
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'Аватар пользователя по указанному _id не найден' });
+        return res.status(404).send({ message: 'Аватар пользователя по указанному _id не найден' });
       }
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
