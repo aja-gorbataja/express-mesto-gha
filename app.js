@@ -1,8 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const userRouter = require('./routes/users');
-const cardRouter = require('./routes/cards');
-const failRouter = require('./routes/index');
+const router = require('./routes/index');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -16,8 +14,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/users', userRouter);
-app.use('/cards', cardRouter);
-app.use('/*', failRouter);
+app.use(router);
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 app.listen(PORT);
