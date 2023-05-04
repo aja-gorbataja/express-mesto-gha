@@ -8,7 +8,7 @@ module.exports.getCards = (req, res) => {
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  const owner = req.user._id;
+  const owner = req.params.user._id;
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
@@ -21,7 +21,7 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
         res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
@@ -39,10 +39,9 @@ module.exports.deleteCard = (req, res) => {
 };
 
 module.exports.likeCard = (req, res) => {
-  const { cardId } = req.params;
   Card.findByIdAndUpdate(
-    cardId,
-    { $addToSet: { likes: req.user._id } },
+    req.params.cardId,
+    { $addToSet: { likes: req.params.user._id } },
     { new: true },
   )
     .then((card) => {
@@ -62,10 +61,9 @@ module.exports.likeCard = (req, res) => {
 };
 
 module.exports.dislikeCard = (req, res) => {
-  const { cardId } = req.params;
   Card.findByIdAndUpdate(
-    cardId,
-    { $pull: { likes: req.user._id } },
+    req.params.cardId,
+    { $pull: { likes: req.params.user._id } },
     { new: true },
   )
     .then((card) => {
