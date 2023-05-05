@@ -2,21 +2,19 @@ const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
 module.exports.getUserById = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
-      } else {
-        res.send({ data: user });
-      }
-    })
+    .orFail()
+    .then((user) => res.send(user))
     .catch((err) => {
+      if (err.name === 'DocumentNotFoundError') {
+        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+      }
       if (err.name === 'CastError') {
         return res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя' });
       }
@@ -27,13 +25,12 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя' });
-      } else {
-        res.status(500).send({ message: err.message });
+        return res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя' });
       }
+      return res.status(500).send({ message: err.message });
     });
 };
 
@@ -43,7 +40,8 @@ module.exports.updateUser = (req, res) => {
     new: true,
     runValidators: true,
   })
-    .then((user) => res.send({ data: user }))
+    .orFail()
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
@@ -61,7 +59,8 @@ module.exports.updateAvatar = (req, res) => {
     new: true,
     runValidators: true,
   })
-    .then((user) => res.send({ data: user }))
+    .orFail()
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара' });
