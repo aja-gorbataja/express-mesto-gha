@@ -48,17 +48,17 @@ module.exports.createUser = (req, res, next) => {
   } = req.body;
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
-      name, about, avatar, email, password: hash, owner: req.user._id,
+      name, about, avatar, email, password: hash,
     }))
     .then((user) => res.status(201).send({
       name: user.name, about: user.about, avatar: user.avatar, email: user.email,
     }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
-      }
       if (err.code === 11000) {
         next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
+      }
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       }
       next(err);
     });
@@ -66,7 +66,7 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
+  User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.send({ token });
