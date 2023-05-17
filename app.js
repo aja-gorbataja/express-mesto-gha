@@ -11,6 +11,8 @@ app.use(helmet());
 
 app.use(express.json());
 
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+
 app.use(router);
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -33,5 +35,5 @@ app.use((err, req, res, next) => {
   res.status(status).send({ message: status === 500 ? 'На сервере произошла ошибка' : message });
   next();
 });
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+
 app.listen(PORT);
