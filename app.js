@@ -1,7 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
-const router = require('./routes/index');
+const router = require('./routes/routes');
 
 const { PORT = 3000 } = process.env;
 const app = express();
