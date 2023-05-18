@@ -27,18 +27,14 @@ module.exports.getUserById = (req, res, next) => {
 };
 
 module.exports.getUser = (req, res, next) => {
-  User.findById(req.params.userId)
-    .orFail()
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
+  User.findOne({ _id: req.user._id })
+    .then((user) => {
+      if (!user) {
         return next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
-      }
-      return next(err);
-    });
+      return res.send(user);
+    })
+    .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
