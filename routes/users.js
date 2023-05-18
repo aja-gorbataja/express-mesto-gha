@@ -6,13 +6,13 @@ const {
 
 userRouter.get('/', getUsers);
 
+userRouter.get('/me', getUser);
+
 userRouter.get('/:userId', celebrate({
   params: Joi.object().keys({
     userId: Joi.string().required().length(24).hex(),
   }),
 }), getUserById);
-
-userRouter.get('/me', getUser);
 
 userRouter.patch('/me', celebrate({
   body: Joi.object().keys({

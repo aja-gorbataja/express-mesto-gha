@@ -19,9 +19,6 @@ module.exports.getUserById = (req, res, next) => {
       if (err.name === 'DocumentNotFoundError') {
         return next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
-      }
       return next(err);
     });
 };
