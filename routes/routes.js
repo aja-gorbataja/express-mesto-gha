@@ -4,6 +4,7 @@ const userRouter = require('./users');
 const cardRouter = require('./cards');
 const auth = require('../middlewares/auth');
 const { createUser, login } = require('../controllers/users');
+const NotFoundError = require('../errors/NotFoundError');
 
 router.use('/users', auth, userRouter);
 router.use('/cards', auth, cardRouter);
@@ -25,6 +26,10 @@ router.post('/signin', celebrate({
     password: Joi.string().required(),
   }),
 }), login);
+
+router.use((req, res, next) => {
+  next(new NotFoundError('Cтраница не найдена'));
+});
 
 router.use(errors());
 
