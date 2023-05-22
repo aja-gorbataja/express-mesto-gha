@@ -1,4 +1,5 @@
 const express = require('express');
+const { errors } = require('celebrate');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
 const router = require('./routes/routes');
@@ -17,5 +18,7 @@ app.use((err, req, res, next) => {
   res.status(status).send({ message: status === 500 ? 'На сервере произошла ошибка' : message });
   next();
 });
+
+app.use(errors());
 
 app.listen(PORT);
