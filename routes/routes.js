@@ -5,6 +5,7 @@ const cardRouter = require('./cards');
 const auth = require('../middlewares/auth');
 const { createUser, login } = require('../controllers/users');
 const NotFoundError = require('../errors/NotFoundError');
+const regexUrl = require('../utils/constants');
 
 router.use('/users', auth, userRouter);
 router.use('/cards', auth, cardRouter);
@@ -15,7 +16,7 @@ router.post('/signup', celebrate({
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(/^https?:\/\/(?:w{3}\.)?(?:[a-z0-9]+[a-z0-9-]*\.)+[a-z]{2,}(?::[0-9]+)?(?:\/\S*)?#?$/i),
+    avatar: Joi.string().regex(regexUrl),
   }),
 }), createUser);
 
